@@ -1,0 +1,42 @@
+var animate = window.requestAnimationFrame || window.webkitRequestAnimationFrame ||         window.mozRequestAnimationFrame || function(callback) { window.setTimeout(callback,     1000/60) };
+var canvas = document.createElement('canvas');
+var width = 900;
+var height = 600;
+canvas.width = width;
+canvas.height = height;
+var context = canvas.getContext('2d');
+
+window.onload = function() {
+    document.body.appendChild(canvas);
+    animate(step);
+}
+
+var step = function() {
+    update();
+    render();
+    animate(step);
+}
+
+var keysDown = {};
+
+window.addEventListener("keydown", function(event) {
+  keysDown[event.keyCode] = true;
+});
+
+window.addEventListener("keyup", function(event) {
+  delete keysDown[event.keyCode];
+});
+
+var idleNum = 0;
+
+var update = function() {
+    for ( var key in keysDown ) {
+        
+    }
+}
+
+var render = function() {
+    context.fillStyle = "#123ab0";
+    context.fillRect(0,0,900,600);
+    update()
+}
