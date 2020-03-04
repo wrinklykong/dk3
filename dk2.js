@@ -199,8 +199,8 @@ var checkCollision = function(monkey, object) {
     if ( changeX <= monkey.w/2+object.w/2 && changeY <= monkey.h/2+object.h/2 ) {
 //        console.log("O")
         //determine if its on the y or x value thing
-        console.log(Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)));
-        console.log(Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)))
+//        console.log(Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)));
+//        console.log(Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)))
         if ( Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)) > monkey.w/2+object.w/2 ) {
             //that means its an x collision
             if ( monkey.x > object.x ) {
@@ -221,12 +221,23 @@ var checkCollision = function(monkey, object) {
             }
         }
         else if ( Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)) > monkey.h/2+object.h/2 ) {
+            console.log("help me homie")
             // that means its an y collision
             if ( monkey.y > object.y ) {
-                return "U"
+                if ( monkey.speedArray[1] < 0 ) {
+                    return "U"
+                }
+                else {
+                    return "D"
+                }
             }
-            else {
-                return "D"
+            else if ( monkey.x < object.x ) {
+                if ( monkey.speedArray[1] > 0 ) {
+                    return "U"
+                }
+                else {
+                    return "D"
+                }
             }
         }
 //        return "O"
