@@ -71,7 +71,7 @@ Monkey.prototype.collision = function() {
                 this.speedArray[3] = 0
             }
             else if ( temp == "D" ) {
-                floors[temp].y+floors[temp2].h
+                this.y = floors[temp2].y+floors[temp2].h
                 this.speedArray[1] = 0
             }
             else if ( temp == "R" ) {
@@ -80,7 +80,7 @@ Monkey.prototype.collision = function() {
                 this.speedArray[2] = 0
             }
             else if ( temp == "L" ) {
-                this.x = floors[temp2].x-this.w
+                this.x = floors[temp2].x-this.w-1
                 this.speedArray[0] = 0
                 this.speedArray[2] = 0
             }
@@ -231,9 +231,9 @@ var checkCollision = function(monkey, object) {
                 if ( monkey.speedArray[0] > 0 ) {
                     return "R"
                 }
-                else if ( monkey.x == monkey.x ) {
-                    return "TOUCH"
-                }
+//                else if ( monkey.x == monkey.x ) {
+//                    return "TOUCH"
+//                }
                 else {
                     return "L"
                 }
@@ -242,9 +242,9 @@ var checkCollision = function(monkey, object) {
                 if ( monkey.speedArray[0] < 0 ) {
                     return "R"
                 }
-                else if ( monkey.x == monkey.x ) {
-                    return "TOUCH"
-                }
+//                else if ( monkey.x == monkey.x ) {
+//                    return "TOUCH"
+//                }
                 else {
                     return "L"
                 }
@@ -257,9 +257,9 @@ var checkCollision = function(monkey, object) {
                 if ( monkey.speedArray[1] < 0 ) {
                     return "U"
                 }
-                else if ( monkey.y == monkey.y ) {
-                    return "TOUCH"
-                }
+//                else if ( monkey.y == monkey.y ) {
+//                    return "TOUCH"
+//                }
                 else {
                     return "D"
                 }
@@ -268,9 +268,9 @@ var checkCollision = function(monkey, object) {
                 if ( monkey.speedArray[1] > 0 ) {
                     return "U"
                 }
-                else if ( monkey.x == monkey.x ) {
-                    return "TOUCH"
-                }
+//                else if ( monkey.x == monkey.x ) {
+//                    return "TOUCH"
+//                }
                 else {
                     return "D"
                 }
