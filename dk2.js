@@ -50,16 +50,41 @@ Monkey.prototype.move = function() {
 
 Monkey.prototype.collision = function() {
     //go through all objects
-    console.log(checkCollision(dk,ground))
+//    console.log(checkCollision(dk,ground))
     if ( checkCollision(dk,ground) == "U" ) { //if its U then set its Y to its Y
-        dk.y = ground.y-ground.h
+        dk.y = ground.y-ground.h-1
         dk.state = "og"
+        dk.speedArray[1] = 0
+        dk.speedArray[3] = 0
     }
     else {
         dk.state = "nog"
     }
-    for ( var temp in floors ) {
-
+    for ( var temp2 in floors ) {
+        var temp = checkCollision(dk, floors[temp2])
+        console.log(temp)
+        if ( temp != "N" ) {
+            if ( temp == "U" ) {
+                this.y = floors[temp2].y-this.h
+                this.state = "og"
+                this.speedArray[1] = 0
+                this.speedArray[3] = 0
+            }
+            else if ( temp == "D" ) {
+                floors[temp].y+floors[temp2].h
+                this.speedArray[1] = 0
+            }
+            else if ( temp == "R" ) {
+                this.x = floors[temp2].x+this.w+floors[temp2].w
+                this.speedArray[0] = 0
+                this.speedArray[2] = 0
+            }
+            else if ( temp == "L" ) {
+                this.x = floors[temp2].x-this.w
+                this.speedArray[0] = 0
+                this.speedArray[2] = 0
+            }
+        }
     }
 }
 
@@ -74,6 +99,9 @@ Monkey.prototype.accelerate = function() {
     if ( num == 0 && this.speedArray[0] != 0 ) {
         this.speedArray[2] = 0
         this.speedArray[0]+=((Math.abs(this.speedArray[0])/this.speedArray[0])*-1)*(0.5)
+        if ( Math.abs(this.speedArray[0]) < .5 && this.speedArray[3] == 0 ) {
+            this.speedArray[0] = 0
+        }
     }
     var xSpeed = this.speedArray[0]
     var ySpeed = this.speedArray[1]
@@ -197,15 +225,14 @@ var checkCollision = function(monkey, object) {
     var changeX = Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2+monkey.speedArray[0]))
     var changeY = Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2+monkey.speedArray[1]))
     if ( changeX <= monkey.w/2+object.w/2 && changeY <= monkey.h/2+object.h/2 ) {
-//        console.log("O")
-        //determine if its on the y or x value thing
-//        console.log(Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)));
-//        console.log(Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)))
-        if ( Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)) > monkey.w/2+object.w/2 ) {
+        if ( Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)) >= monkey.w/2+object.w/2 ) {
             //that means its an x collision
             if ( monkey.x > object.x ) {
                 if ( monkey.speedArray[0] > 0 ) {
                     return "R"
+                }
+                else if ( monkey.x == monkey.x ) {
+                    return "TOUCH"
                 }
                 else {
                     return "L"
@@ -215,25 +242,34 @@ var checkCollision = function(monkey, object) {
                 if ( monkey.speedArray[0] < 0 ) {
                     return "R"
                 }
+                else if ( monkey.x == monkey.x ) {
+                    return "TOUCH"
+                }
                 else {
                     return "L"
                 }
             }
         }
-        else if ( Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)) > monkey.h/2+object.h/2 ) {
-            console.log("help me homie")
+        else if ( Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)) >= monkey.h/2+object.h/2 ) {
+//            console.log("help me homie")
             // that means its an y collision
             if ( monkey.y > object.y ) {
                 if ( monkey.speedArray[1] < 0 ) {
                     return "U"
                 }
+                else if ( monkey.y == monkey.y ) {
+                    return "TOUCH"
+                }
                 else {
                     return "D"
                 }
             }
-            else if ( monkey.x < object.x ) {
+            else if ( monkey.y < object.y ) {
                 if ( monkey.speedArray[1] > 0 ) {
                     return "U"
+                }
+                else if ( monkey.x == monkey.x ) {
+                    return "TOUCH"
                 }
                 else {
                     return "D"
