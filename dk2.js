@@ -54,9 +54,10 @@ Monkey.prototype.move = function() {
 Monkey.prototype.collision = function() {
     //go through all objects
 //    console.log(checkCollision(dk,ground))
-    if ( checkCollision(dk,ground) != "U" ) { //if its U then set its Y to its Y
-        dk.state = "nog"
-    }
+//    if ( checkCollision(dk,ground) != "U" ) { //if its U then set its Y to its Y
+//        dk.state = "nog"
+//    }
+    var temp2 = 0
     for ( var temp2 in floors ) {
         var temp = checkCollision(dk, floors[temp2])
 //        console.log(temp)
@@ -66,6 +67,7 @@ Monkey.prototype.collision = function() {
                 this.state = "og"
                 this.speedArray[1] = 0
                 this.speedArray[3] = 0
+                temp2++
             }
             else if ( temp == "D" ) {
                 this.y = floors[temp2].y+floors[temp2].h-1
@@ -81,6 +83,9 @@ Monkey.prototype.collision = function() {
                 this.speedArray[0] = 0
                 this.speedArray[2] = 0
             }
+        }
+        if ( temp2 == 0 ) {
+            dk.state = "nog"
         }
     }
 }
@@ -131,15 +136,23 @@ Object.prototype.render = function() {
 }
 
 Sprite.prototype.render = function() {
-    context.drawImage(this.img, this.x-virtWindow.x, this.y-virtWindow.y, this.w, this.h)
+//    context.drawImage(this.img, this.x-virtWindow.x, this.y-virtWindow.y, this.w, this.h)
+    context.drawImage(this.img, this.x, this.y, this.w, this.h)
 }
 
 var virtWindow = new vWindow(virtX,virtY,900,600)
-var dk = new Monkey("#783283", 110, 50, 100, 100, [0,0,0,0,8,30], "nog")
+var dk = new Monkey("#783283", 0, 0, 100, 100, [0,0,0,0,8,30], "nog")
 var groundImg = new Image()
 groundImg.src = "./floor.png"
 var ground = new Object(groundImg, 100, 450, 1500, 100)
-var obs1 = new Object(groundImg, 500, 290, 200, 200)
+var obs1 = new Object(groundImg, 50, 200, 120, 550)
+var obs2 = new Object(groundImg, 275, 400, 500, 200)
+var obs3 = new Object(groundImg, 950, 400, 150, 200)
+var obs4 = new Object(groundImg, 1250, 200, 150, 400)
+var obs5 = new Object(groundImg, 1400, 300, 150, 300)
+var obs6 = new Object(groundImg, 1550, 400, 150, 200)
+var obs7 = new Object(groundImg, 1700, 500, 500, 200)
+
 var bgg = new Image()
 bgg.src = "./bg.png"
 var background = new Sprite(bgg, 0, 0,1500,600)
@@ -258,7 +271,7 @@ var checkCollision = function(monkey, object) {
 }
 //object must have .x, .y, .w, .h :)
 //establish a collection of floors
-var floors = [ground, obs1]
+var floors = [obs2, obs1, obs3, obs4, obs5, obs6, obs7]
 
 
 var isInFrame = function(object) {
