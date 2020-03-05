@@ -35,6 +35,9 @@ function Sprite(img,x,y,w,h) {
     this.h = h
 }
 
+var monkeyCurrentFrame = [0,0]
+var monkeyLastFrame = [0,0]
+
 Monkey.prototype.render = function() {
     context.fillStyle = this.color
     context.fillRect(this.x-virtWindow.x, this.y-virtWindow.y, this.w, this.h);
@@ -51,18 +54,12 @@ Monkey.prototype.move = function() {
 Monkey.prototype.collision = function() {
     //go through all objects
 //    console.log(checkCollision(dk,ground))
-    if ( checkCollision(dk,ground) == "U" ) { //if its U then set its Y to its Y
-        dk.y = ground.y-ground.h-1
-        dk.state = "og"
-        dk.speedArray[1] = 0
-        dk.speedArray[3] = 0
-    }
-    else {
+    if ( checkCollision(dk,ground) != "U" ) { //if its U then set its Y to its Y
         dk.state = "nog"
     }
     for ( var temp2 in floors ) {
         var temp = checkCollision(dk, floors[temp2])
-        console.log(temp)
+//        console.log(temp)
         if ( temp != "N" ) {
             if ( temp == "U" ) {
                 this.y = floors[temp2].y-this.h
@@ -71,16 +68,16 @@ Monkey.prototype.collision = function() {
                 this.speedArray[3] = 0
             }
             else if ( temp == "D" ) {
-                this.y = floors[temp2].y+floors[temp2].h
+                this.y = floors[temp2].y+floors[temp2].h-1
                 this.speedArray[1] = 0
             }
             else if ( temp == "R" ) {
-                this.x = floors[temp2].x+this.w+floors[temp2].w
+                this.x = floors[temp2].x+floors[temp2].w
                 this.speedArray[0] = 0
                 this.speedArray[2] = 0
             }
             else if ( temp == "L" ) {
-                this.x = floors[temp2].x-this.w-1
+                this.x = floors[temp2].x-this.w
                 this.speedArray[0] = 0
                 this.speedArray[2] = 0
             }
@@ -99,7 +96,7 @@ Monkey.prototype.accelerate = function() {
     if ( num == 0 && this.speedArray[0] != 0 ) {
         this.speedArray[2] = 0
         this.speedArray[0]+=((Math.abs(this.speedArray[0])/this.speedArray[0])*-1)*(0.5)
-        if ( Math.abs(this.speedArray[0]) < .5 && this.speedArray[3] == 0 ) {
+        if ( Math.abs(this.speedArray[0]) < .5 && this.speedArray[2] == 0 ) {
             this.speedArray[0] = 0
         }
     }
@@ -142,7 +139,7 @@ var dk = new Monkey("#783283", 110, 50, 100, 100, [0,0,0,0,8,30], "nog")
 var groundImg = new Image()
 groundImg.src = "./floor.png"
 var ground = new Object(groundImg, 100, 450, 1500, 100)
-var obs1 = new Object(groundImg, 1000, 290, 200, 200)
+var obs1 = new Object(groundImg, 500, 290, 200, 200)
 var bgg = new Image()
 bgg.src = "./bg.png"
 var background = new Sprite(bgg, 0, 0,1500,600)
@@ -189,13 +186,18 @@ var update = function() {
             dk.speedArray[1] = -20
 //            dk.speedArray[3] = -5
         }
+//        if ( key == 32 && checkCollision(dk,obs1) == "R" && dk.state == "nog") {
+//            dk.speedArray[0] = 20
+//        }
     }
 }
 
 var render = function() {
     //collective dk things
+    monkeyLastFrame = [dk.x, dk.y]
     dk.accelerate()
     dk.move()
+    monkeyCurrentFrame = [dk.x, dk.y]
     virtWindow.x = dk.x-300
     dk.collision()
     //end collective dk things
@@ -206,6 +208,7 @@ var render = function() {
         }
     }
     dk.render()
+//    console.log(dk.state)
     update()
 }
 
@@ -225,58 +228,30 @@ var checkCollision = function(monkey, object) {
     var changeX = Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2+monkey.speedArray[0]))
     var changeY = Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2+monkey.speedArray[1]))
     if ( changeX <= monkey.w/2+object.w/2 && changeY <= monkey.h/2+object.h/2 ) {
-        if ( Math.abs((object.x+object.w/2)-(monkey.x+monkey.w/2)) >= monkey.w/2+object.w/2 ) {
+        if ( Math.abs((object.x+object.w/2)-(monkeyLastFrame[0]+monkey.w/2)) >= monkey.w/2+object.w/2 ) {
             //that means its an x collision
-            if ( monkey.x > object.x ) {
-                if ( monkey.speedArray[0] > 0 ) {
-                    return "R"
-                }
-//                else if ( monkey.x == monkey.x ) {
-//                    return "TOUCH"
-//                }
-                else {
-                    return "L"
-                }
+            if ( monkeyLastFrame[0] == object.x ) {
+                return "N"
             }
-            else if ( monkey.x < object.x ) {
-                if ( monkey.speedArray[0] < 0 ) {
-                    return "R"
-                }
-//                else if ( monkey.x == monkey.x ) {
-//                    return "TOUCH"
-//                }
-                else {
-                    return "L"
-                }
+            if ( monkeyLastFrame[0] > object.x ) {
+                return "R"
+            }
+            else if ( monkeyLastFrame[0] < object.x ) {
+                return "L"
             }
         }
-        else if ( Math.abs((object.y+object.h/2)-(monkey.y+monkey.h/2)) >= monkey.h/2+object.h/2 ) {
-//            console.log("help me homie")
-            // that means its an y collision
-            if ( monkey.y > object.y ) {
-                if ( monkey.speedArray[1] < 0 ) {
-                    return "U"
-                }
-//                else if ( monkey.y == monkey.y ) {
-//                    return "TOUCH"
-//                }
-                else {
-                    return "D"
-                }
+        else if ( Math.abs((object.y+object.h/2)-(monkeyLastFrame[1]+monkey.h/2)) >= monkey.h/2+object.h/2 ) {
+            //y collision
+            if ( monkeyLastFrame[1] == object.y ) {
+                return "N"
             }
-            else if ( monkey.y < object.y ) {
-                if ( monkey.speedArray[1] > 0 ) {
-                    return "U"
-                }
-//                else if ( monkey.x == monkey.x ) {
-//                    return "TOUCH"
-//                }
-                else {
-                    return "D"
-                }
+            if ( monkeyLastFrame[1] < object.y ) {
+                return "U"
+            }
+            else if ( monkeyLastFrame[1] > object.y ) {
+                return "D"
             }
         }
-//        return "O"
     }
 
     return "N"
